@@ -85,8 +85,6 @@ namespace UnityFileAdder
             }
 
             var assetPath = Path.Combine(currentPath, _input);
-            Debug.Log($"Final path: {assetPath}");
-
             var directoryPath = Path.GetDirectoryName(assetPath);
 
             if (!Directory.Exists(directoryPath))
@@ -102,9 +100,6 @@ namespace UnityFileAdder
 
             if (isFilePath)
             {
-                // TODO: Fix issue
-                // Submitting Blablabla/Something.cs won't work if Blablabla directory doesn't already exist
-
                 if (File.Exists(assetPath))
                 {
                     Debug.LogError($"File already exists at {assetPath}");
@@ -117,12 +112,9 @@ namespace UnityFileAdder
                     return;
                 }
 
-                // TODO:
-                // Introduce file templates.
-                // A few ideas:
-                // Default MonoBehaviour script.
-                // C# Interface
-                File.WriteAllText(assetPath, "");
+                var fileName = Path.GetFileName(assetPath);
+                var assetContent = GetTemplate(fileName);
+                File.WriteAllText(assetPath, assetContent);
             }
 
             AssetDatabase.Refresh();
@@ -137,6 +129,19 @@ namespace UnityFileAdder
             ProjectWindowUtil.ShowCreatedAsset(asset);
 
             Close();
+        }
+
+        private static string GetTemplate(string fileNameWithExtension)
+        {
+            var format = Path.GetExtension(fileNameWithExtension).Trim('.');
+            var fileName = Path.GetFileNameWithoutExtension(fileNameWithExtension);
+            const string TemplateFolder = "Assets/Editor/Templates/";
+            var templateLocation = Path.Combine(TemplateFolder, $"{format}.txt");
+
+            var template = File.ReadAllText(templateLocation);
+            template = template.Replace("{fileName}", fileName);
+
+            return template;
         }
 
         private static string GetActiveFolderPath()
