@@ -8,7 +8,7 @@ namespace UnityFileAdder
 {
     public class AddNewFileEditorWindow : EditorWindow
     {
-        public string path;
+        public string currentPath;
         private static Vector2 _size = new(500, 75);
         private string _input;
         private bool _initialFocusTriggered;
@@ -20,7 +20,7 @@ namespace UnityFileAdder
             window.titleContent = new GUIContent("Add New File");
             window.minSize = _size;
             window.maxSize = _size;
-            window.path = GetActiveFolderPath();
+            window.currentPath = GetActiveFolderPath();
             window.Center();
         }
 
@@ -47,7 +47,7 @@ namespace UnityFileAdder
             GUILayout.BeginArea(area);
 
             GUILayout.BeginHorizontal();
-            GUILayout.Label($"{path}/", GUILayout.ExpandWidth(false));
+            GUILayout.Label($"{currentPath}/", GUILayout.ExpandWidth(false));
         
             GUI.SetNextControlName("Input");
             _input = GUILayout.TextField(_input);
@@ -84,32 +84,36 @@ namespace UnityFileAdder
                 return;
             }
 
-            var finalPath = Path.Combine(path, _input);
-            Debug.Log($"Final path: {finalPath}");
+            var assetPath = Path.Combine(currentPath, _input);
+            Debug.Log($"Final path: {assetPath}");
 
-            var directoryPath = Path.GetDirectoryName(finalPath);
+            var directoryPath = Path.GetDirectoryName(assetPath);
 
             if (!Directory.Exists(directoryPath))
             {
-                Directory.CreateDirectory(Path.GetDirectoryName(finalPath));
+                Directory.CreateDirectory(Path.GetDirectoryName(assetPath));
             }
 
-            if (!finalPath.EndsWith("\\") &&
-                !finalPath.EndsWith("/") &&
-                !finalPath.EndsWith(Path.PathSeparator))
+            var isFilePath =
+                !assetPath.EndsWith("\\") &&
+                !assetPath.EndsWith("/") &&
+                !assetPath.EndsWith(Path.PathSeparator);
+
+
+            if (isFilePath)
             {
                 // TODO: Fix issue
                 // Submitting Blablabla/Something.cs won't work if Blablabla directory doesn't already exist
 
-                if (File.Exists(finalPath))
+                if (File.Exists(assetPath))
                 {
-                    Debug.LogError($"File already exists at {finalPath}");
+                    Debug.LogError($"File already exists at {assetPath}");
                     return;
                 }
 
-                if (Directory.Exists(finalPath))
+                if (Directory.Exists(assetPath))
                 {
-                    Debug.LogError($"Unable to create a file. Name reserved by a directory at {finalPath}");
+                    Debug.LogError($"Unable to create a file. Name reserved by a directory at {assetPath}");
                     return;
                 }
 
@@ -118,13 +122,19 @@ namespace UnityFileAdder
                 // A few ideas:
                 // Default MonoBehaviour script.
                 // C# Interface
-                File.WriteAllText(finalPath, "");
-
-                // TODO:
-                // See if you can auto-focus the newly created asset
+                File.WriteAllText(assetPath, "");
             }
 
             AssetDatabase.Refresh();
+
+            if (!isFilePath)
+            {
+                // Necessary for focusing on a folder to work
+                assetPath = assetPath.Trim('/', '\\', Path.PathSeparator);
+            }
+
+            var asset = AssetDatabase.LoadAssetAtPath<Object>(assetPath);
+            ProjectWindowUtil.ShowCreatedAsset(asset);
 
             Close();
         }
