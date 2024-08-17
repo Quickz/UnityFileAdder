@@ -92,11 +92,7 @@ namespace UnityFileAdder
                 Directory.CreateDirectory(Path.GetDirectoryName(assetPath));
             }
 
-            var isFilePath =
-                !assetPath.EndsWith("\\") &&
-                !assetPath.EndsWith("/") &&
-                !assetPath.EndsWith(Path.PathSeparator);
-
+            var isFilePath = PathHelper.IsFilePath(assetPath);
 
             if (isFilePath)
             {
@@ -122,7 +118,7 @@ namespace UnityFileAdder
             if (!isFilePath)
             {
                 // Necessary for focusing on a folder to work
-                assetPath = assetPath.Trim('/', '\\', Path.PathSeparator);
+                assetPath = PathHelper.TrimPathSeparators(assetPath);
             }
 
             var asset = AssetDatabase.LoadAssetAtPath<Object>(assetPath);
