@@ -131,7 +131,7 @@ namespace UnityFileAdder
         {
             var format = Path.GetExtension(fileNameWithExtension).Trim('.');
             var fileName = Path.GetFileNameWithoutExtension(fileNameWithExtension);
-            const string TemplateFolder = "Assets/Editor/Templates/";
+            const string TemplateFolder = "Assets/FileAdder/Editor/Templates/";
             var templateLocation = Path.Combine(TemplateFolder, $"{format}.txt");
 
             if (!File.Exists(templateLocation))
