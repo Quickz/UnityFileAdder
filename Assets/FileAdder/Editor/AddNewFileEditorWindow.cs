@@ -13,7 +13,7 @@ namespace UnityFileAdder
         private string _input;
         private bool _initialFocusTriggered;
 
-        [MenuItem("Custom/Add New File %E")]
+        [MenuItem("Window/Add New File %E")]
         public static void AddNewFile()
         {
             var window = GetWindow<AddNewFileEditorWindow>();
