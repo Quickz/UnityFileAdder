@@ -8,7 +8,7 @@ namespace UnityFileAdder
 {
     public class AddNewFileEditorWindow : EditorWindow
     {
-        public string currentPath;
+        public string currentFolderPath;
         private static Vector2 _size = new(500, 75);
         private string _input;
         private bool _initialFocusTriggered;
@@ -20,7 +20,7 @@ namespace UnityFileAdder
             window.titleContent = new GUIContent("Add New File");
             window.minSize = _size;
             window.maxSize = _size;
-            window.currentPath = GetActiveFolderPath();
+            window.currentFolderPath = GetActiveFolderPath();
             window.Center();
         }
 
@@ -47,7 +47,9 @@ namespace UnityFileAdder
             GUILayout.BeginArea(area);
 
             GUILayout.BeginHorizontal();
-            GUILayout.Label($"{currentPath}/", GUILayout.ExpandWidth(false));
+
+            var currentFolder = Path.GetFileName(currentFolderPath);
+            GUILayout.Label(currentFolder + PathHelper.PathSeparator, GUILayout.ExpandWidth(false));
         
             GUI.SetNextControlName("Input");
             _input = GUILayout.TextField(_input);
@@ -84,7 +86,7 @@ namespace UnityFileAdder
                 return;
             }
 
-            var assetPath = Path.Combine(currentPath, _input);
+            var assetPath = Path.Combine(currentFolderPath, _input);
             var directoryPath = Path.GetDirectoryName(assetPath);
 
             if (!Directory.Exists(directoryPath))
