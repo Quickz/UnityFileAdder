@@ -21,5 +21,11 @@ A simple editor extension that makes it easier to add new files.
 - **/Editor** - this contains all the core functionality of the package.
 - **/Editor/Templates** - this contains all the file templates that are used for creating new files.
 
+## How to customize the shortcut
+1. Go to Edit -> Shortcuts...
+2. Select All Unity Commands (on the left side)
+3. Type in "Add New File" in the search (on the right side)
+4. Double click on the item and activate the new shortcut
+
 ## Extra notes
 The project is fully open-source and is available at: [https://github.com/Quickz/UnityFileAdder](https://github.com/Quickz/UnityFileAdder)
